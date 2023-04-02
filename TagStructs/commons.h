@@ -89,21 +89,8 @@ struct _s_data {
 template <typename T>
 struct _s_resource {
     T* content_ptr;
-    // note that these two values are probably overwritten with the structure pointer
-    // at runtime, as the other structs all seem to contain the structure pointers
-
-    // this would be a very good idea for us to do aswell, as we required storing a pointer to the raaw data somwehrre
-    // and this may work perfect
-    _s_resource_compiled_data info;
-};
-
-struct _s_resource_compiled_data
-{
-    uint32_t padding;
+    uint32_t runtime_resource_handle;
     uint32_t is_chunked_resource;
-    union
-    {
-        char* runtime_data;
-    };
 };
+
 #pragma pack(pop)

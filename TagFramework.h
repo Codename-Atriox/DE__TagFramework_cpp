@@ -131,4 +131,29 @@ struct zoneset_tag {
     uint32_t        GlobalID;
     int32_t         StringID;
 };
+// basic versions of the structs
+struct _basic_tagblock {
+    void* content_ptr;
+    int64_t structure_ptr;
+    int32_t count;
+};
+struct _basic_tagref {
+    void* content_ptr; // ptr to tag
+    uint32_t tagid;
+    uint64_t assetid;
+    uint32_t group;
+    uint32_t runtime_unk;
+};
+struct _basic_data {
+    char* content_ptr;
+    int64_t structure_ptr;
+    uint32_t compiled_unk;
+    uint32_t data_size;
+};
+struct _basic_resource {
+    void* content_ptr;
+    uint32_t padding;
+    uint32_t is_chunked_resource;
+};
+
 #pragma pack(pop)
