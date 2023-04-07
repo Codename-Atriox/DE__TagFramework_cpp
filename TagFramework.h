@@ -31,10 +31,39 @@ enum TAG_OBJ_TYPE
 	terrain,
 	level
 };
+struct size_pointer {
+public:
+	size_pointer(char* ptr, unsigned int _size){
+		content_ptr = ptr;
+		size = _size;
+	}
+	char* content_ptr;
+	unsigned int size;
+};
+class runtime_tag{
+public:
+	runtime_tag(void* _tag_data, vector<size_pointer>* chunk_resources, vector<size_pointer>* struct_resources, char* _cleanup_ptr) {
+		tag_data = _tag_data;
+		streaming_chunks = chunk_resources;
+		resource_structs_cleanup_ptrs = struct_resources;
+		cleanup_ptr = _cleanup_ptr;
+	}
+	~runtime_tag(){ // cleanup all allocated structs/resources
+		delete[] cleanup_ptr;
+		for (int c = 0; c < streaming_chunks->size(); c++) delete[] (*streaming_chunks)[c].content_ptr;
+		for (int c = 0; c < resource_structs_cleanup_ptrs->size(); c++) delete[](*resource_structs_cleanup_ptrs)[c].content_ptr;
+	}
+	void* tag_data; // to use this, you must cast it to the specific tag's structure, these structures can be generated via the plugins_to_cpp_convertor;
+	vector<size_pointer>* streaming_chunks;
+private:
+	char* cleanup_ptr; // call 'delete' on this to clean up the tag
+	vector<size_pointer>* resource_structs_cleanup_ptrs; // used to clean up, each item's size will be listed as 0 when loaded
+};
+
 // the structures for each of these will be included in separate .h files, so they may be more easily regenerated in the instance of a structure change by 343
 
 // this function will be the do all open tag file and return data object if possible
-extern "C" TAGFRAMEWORK_API TAG_OBJ_TYPE Opentag(string _In_tag_path, void* _Out_data);
+extern "C" TAGFRAMEWORK_API TAG_OBJ_TYPE Opentag(string _In_tag_path, runtime_tag*& _Out_tag);
 
 
 
@@ -133,7 +162,7 @@ struct zoneset_tag {
 };
 // basic versions of the structs
 struct _basic_tagblock {
-    void* content_ptr;
+    void* content_ptr; // ptr to more structs
     int64_t structure_ptr;
     int32_t count;
 };
@@ -142,17 +171,17 @@ struct _basic_tagref {
     uint32_t tagid;
     uint64_t assetid;
     uint32_t group;
-    uint32_t runtime_unk;
+    uint32_t runtime_tag_handle;
 };
 struct _basic_data {
-    char* content_ptr;
+    char* content_ptr; // ptr to literal data
     int64_t structure_ptr;
     uint32_t compiled_unk;
     uint32_t data_size;
 };
 struct _basic_resource {
-    void* content_ptr;
-    uint32_t padding;
+    void* content_ptr; // otr to more structs
+    uint32_t runtime_resource_handle;
     uint32_t is_chunked_resource;
 };
 

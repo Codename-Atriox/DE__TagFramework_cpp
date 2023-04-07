@@ -24,12 +24,6 @@
     <ClInclude Include="TagFramework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TagStructs\commons.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TagStructs\bitm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
